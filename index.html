@@ -43,14 +43,33 @@
     <h1>Search in Your Database</h1>
     <input type="text" id="search-input" placeholder="Enter value to search">
     <button id="search-button" onclick="searchDatabase()">Search</button>
+    <p id="result"></p>
 
     <script>
-        function searchDatabase() {
-            // You'll implement the logic to trigger your worker and retrieve the value here
-            // For now, let's just display an alert as a placeholder
-            alert('Fetching value from the database...');
+        async function searchDatabase() {
+            const inputValue = document.getElementById('search-input').value;
+
+            try {
+                const response = await fetch(`kv.worker.bertasdemos.com`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ key: inputValue }),
+                });
+
+                if (!response.ok) {
+                    throw new Error('Value not found');
+                }
+
+                const result = await response.text();
+                document.getElementById('result').innerText = `Retrieved value: ${result}`;
+            } catch (error) {
+                document.getElementById('result').innerText = `Error: ${error.message}`;
+            }
         }
     </script>
 </body>
 
 </html>
+
